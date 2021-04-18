@@ -1,0 +1,14 @@
+{
+    "bot": {
+        "token": "",
+        "guildID": ""
+    },
+    "roles": {
+        "roles": ["", ""],
+        "esRoles": ["", ""]
+    },
+    "channels": {
+        "suggestionChannels": [""],
+        "esSuggestionChannels": [""]
+    }
+}
