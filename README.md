@@ -1,6 +1,6 @@
 # suggestion_bot
  
- This is a work in progress suggestion bot script, although this is technically v2.0 this is a complete rewrite with a ton of planned new features:
+ This is a work in progress suggestion bot script, although this is technically v2.0 is is a complete rewrite with a ton of planned new features:
  - Slash commands with suggestion type
  - In-depth command system to manage suggestions (also using slash commands)
  - Multichannel system to make approved/denied/implemented suggestions clear and easy to track for users
