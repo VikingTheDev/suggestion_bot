@@ -27,6 +27,7 @@ client.on('ready', async () => {
     const commands = await getApp(guildId).commands.get()
     console.log(commands)
     
+    // define a new slash command in the guild
     await getApp(guildId).commands.post({
         data: {
             name: 'new',
@@ -61,7 +62,7 @@ client.on('ready', async () => {
             ]
         } 
     })
-    
+
     
     // Code to delete a slash command, replace numbers with application ID
     //await getApp(guildId).commands('833299535886942209').delete()
@@ -82,13 +83,14 @@ client.on('ready', async () => {
         }
 
         console.log(args)
-        console.log(options)
 
         if (command === 'new') {
         const embed = new DiscordJS.MessageEmbed()
-            .setTitle('Example Embed')
-            .addField('Type', args.type)
-            .addField('Suggestion', args.suggestion)
+            .setTitle(`${interaction.member.user.username} made a ${args.type} suggestion:`)
+            .setDescription(args.suggestion)
+            .setFooter('Made by VikingTheDev © 2021')
+            .setTimestamp()
+            .addField("Status: ", "Awaiting review")
         reply(interaction, embed)
         }
     })
@@ -124,5 +126,9 @@ const createAPIMessage = async (interaction: any, content: any) => {
     
     return { ...data, files }
 }
+
+client.on('messageReactionAdd', (reaction, user) => {
+    console.log(reaction, user);
+})
 
 client.login(config.bot.token);
