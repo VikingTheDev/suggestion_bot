@@ -62,6 +62,80 @@ client.on('ready', async () => {
             ]
         } 
     })
+    getApp(guildId).commands.post({
+        data: {
+            name: 'test',
+            description: 'Test for deferrals and permissions',
+            type: 2, // sub-command group
+            options: [
+                {
+                    name: 'new',
+                    description: 'Create new thing',
+                    type: 1,
+                    options: [
+                        {
+                            name: 'Type',
+                            description: 'Type of thing you want to create',
+                            type: 3,
+                            required: true,
+                            choices: [
+                                {
+                                    name: 'Cool thing',
+                                    value: 'cool_thing'
+                                },
+                                {
+                                    name: 'Kinda cool thing',
+                                    value: 'kinda_cool_thing'
+                                },
+                                {
+                                    name: 'Uncool thing',
+                                    value: 'uncool_thing'
+                                }
+                            ]
+                        },
+                        {
+                            name: 'Content',
+                            description: 'Content used to create new thing',
+                            type: 3,
+                            required: true
+                        }
+                    ]
+                },
+                {
+                    name: 'delete',
+                    description: 'Edit thing',
+                    type: 1,
+                    options: [
+                        {
+                            name: 'ID',
+                            description: 'ID of thing you want to edit',
+                            required: true,
+                            type: 3 // string
+                        },
+                        {
+                            name: 'Content',
+                            description: 'New content to replace old content with',
+                            required: true,
+                            type: 3
+                        }
+                    ]
+                },
+                {
+                    name: 'edit',
+                    description: 'Delete thing',
+                    type: 1,
+                    options: [
+                        {
+                            name: 'ID',
+                            description: 'ID of thing you want to delete',
+                            required: true,
+                            type: 3 // string
+                        }
+                    ]
+                }
+            ]
+        }
+    })
 
     
     // Code to delete a slash command, replace numbers with application ID
@@ -74,24 +148,57 @@ client.on('ready', async () => {
         
         const args: any = {}
 
-        if (options) {
-            for (const option of options) {
-                const { name, value } = option;
-                // @ts-ignore
-                args[name] = value;
-            }
-        }
-
-        console.log(args)
+        // Might make a class instead to accommodate for sub-commands
+        
+        //console.log(interaction)
+        
+        // This is apparently how to access the options when using sub-commands ¯\_(ツ)_/¯
 
         if (command === 'new') {
-        const embed = new DiscordJS.MessageEmbed()
-            .setTitle(`${interaction.member.user.username} made a ${args.type} suggestion:`)
-            .setDescription(args.suggestion)
-            .setFooter('Made by VikingTheDev © 2021')
-            .setTimestamp()
-            .addField("Status: ", "Awaiting review")
-        reply(interaction, embed)
+            if (options) {
+                for (const option of options) {
+                    const { name, value } = option;
+                    args[name] = value;
+                }
+            }
+            const embed = new DiscordJS.MessageEmbed()
+                .setTitle(`${interaction.member.user.username} made a ${args.type} suggestion:`)
+                .setDescription(args.suggestion)
+                .setFooter('Made by VikingTheDev © 2021')
+                .setTimestamp()
+                .addField("Status: ", "Awaiting review")
+            reply(interaction, embed)
+        } else if (command === 'test') {
+            if (options) {
+                for (const option of options[0].options) {
+                    const { name, value } = option;
+                    args[name] = value;
+                }
+                console.log(options[0].name, args);
+                switch (true) {
+                    case options[0].name === 'new': 
+                        defer(interaction);
+                        // @ts-ignore
+                        console.log(await client.api.webhooks['834002840614731806'][interaction.token].messages['@original'].patch({
+                            data: {
+                                type: 4,
+                                data: {
+                                    content: 'Test'
+                                }
+                            }
+                        }))
+                        // setTimeout(() => {
+                        //     reply(interaction, 'Thing is too large!');
+                        // }, 5000)
+                        break;
+                    case options[0].name === 'edit': 
+
+                        break;
+                    case options[0].name === 'delete':
+
+                        break;
+                }
+            }
         }
     })
 });
@@ -115,6 +222,18 @@ const reply = async (interaction: object, response: string | object) => {
     })
 }
 
+const defer = async (interaction: object) => {
+    // @ts-ignore
+    client.api.interactions(interaction.id, interaction.token).callback.post({
+        data: {
+            type: 5,
+        }
+    })
+}
+
+const editDefer = async (interaction: object, response: string | object) => {
+    // @ts-ignore
+}
 const createAPIMessage = async (interaction: any, content: any) => {
     const { data, files } = await DiscordJS.APIMessage.create(
         // @ts-ignore
