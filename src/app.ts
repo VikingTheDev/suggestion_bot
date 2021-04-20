@@ -150,13 +150,15 @@ client.on('ready', async () => {
 
         // Might make a class instead to accommodate for sub-commands
         
+        console.log(interaction.id, interaction.data.id)
+
         //console.log(interaction)
         
         // This is apparently how to access the options when using sub-commands ¯\_(ツ)_/¯
 
         if (command === 'new') {
             if (options) {
-                for (const option of options) {
+                for await (const option of options) {
                     const { name, value } = option;
                     args[name] = value;
                 }
@@ -179,23 +181,19 @@ client.on('ready', async () => {
                     case options[0].name === 'new': 
                         defer(interaction);
                         // @ts-ignore
-                        console.log(await client.api.webhooks['834002840614731806'][interaction.token].messages['@original'].patch({
+                        await client.api.webhooks(interaction.application_id, interaction.token).messages['@original'].patch({
                             data: {
-                                type: 4,
-                                data: {
-                                    content: 'Test'
-                                }
+                                content: 'Test'
                             }
-                        }))
+                        })
                         // setTimeout(() => {
                         //     reply(interaction, 'Thing is too large!');
                         // }, 5000)
                         break;
                     case options[0].name === 'edit': 
-
                         break;
                     case options[0].name === 'delete':
-
+                        defer(interaction);
                         break;
                 }
             }
