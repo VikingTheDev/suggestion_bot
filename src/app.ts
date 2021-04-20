@@ -153,8 +153,6 @@ client.on('ready', async () => {
         console.log(interaction.id, interaction.data.id)
 
         //console.log(interaction)
-        
-        // This is apparently how to access the options when using sub-commands ¯\_(ツ)_/¯
 
         if (command === 'new') {
             if (options) {
@@ -162,6 +160,13 @@ client.on('ready', async () => {
                     const { name, value } = option;
                     args[name] = value;
                 }
+                const embed = new DiscordJS.MessageEmbed()
+                    .setTitle(`${interaction.member.user.username} made a ${args.type} suggestion:`)
+                    .setDescription(args.suggestion)
+                    .setFooter('Made by VikingTheDev © 2021')
+                    .setTimestamp()
+                    .addField("Status: ", "Awaiting review")
+                reply(interaction, embed);
             }
             const embed = new DiscordJS.MessageEmbed()
                 .setTitle(`${interaction.member.user.username} made a ${args.type} suggestion:`)
