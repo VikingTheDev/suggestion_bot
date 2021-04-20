@@ -71,12 +71,12 @@ client.on('ready', async () => {
                 {
                     name: 'new',
                     description: 'Create new thing',
-                    type: 1,
+                    type: 1, // sub-command
                     options: [
                         {
                             name: 'Type',
                             description: 'Type of thing you want to create',
-                            type: 3,
+                            type: 3, // string
                             required: true,
                             choices: [
                                 {
@@ -96,7 +96,7 @@ client.on('ready', async () => {
                         {
                             name: 'Content',
                             description: 'Content used to create new thing',
-                            type: 3,
+                            type: 3, // string
                             required: true
                         }
                     ]
@@ -104,7 +104,7 @@ client.on('ready', async () => {
                 {
                     name: 'delete',
                     description: 'Edit thing',
-                    type: 1,
+                    type: 1, // sub-command
                     options: [
                         {
                             name: 'ID',
@@ -116,14 +116,14 @@ client.on('ready', async () => {
                             name: 'Content',
                             description: 'New content to replace old content with',
                             required: true,
-                            type: 3
+                            type: 3 // string
                         }
                     ]
                 },
                 {
                     name: 'edit',
                     description: 'Delete thing',
-                    type: 1,
+                    type: 1, // sub-command
                     options: [
                         {
                             name: 'ID',
@@ -188,7 +188,12 @@ client.on('ready', async () => {
                         // @ts-ignore
                         await client.api.webhooks(interaction.application_id, interaction.token).messages['@original'].patch({
                             data: {
-                                content: 'Test'
+                                content: 'Test',
+                                // tts: true/false,
+                                // embed: {
+                                //    title: 'Hello!*,
+                                //    description: 'This is an embed'
+                                //}
                             }
                         })
                         // setTimeout(() => {
