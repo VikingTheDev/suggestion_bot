@@ -1,4 +1,4 @@
-// Suggestion bot v2.0
+// Suggestion bot v2.0.0
 // Written by VikingTheDev
 
 import DiscordJS, { BaseClient } from "discord.js";
@@ -17,6 +17,22 @@ const getApp = (guildId: string) => {
     return app
 }
 
+const editPermissions = (guildId: string, commandId: string, data: object) => {
+    // @ts-ignore
+    let command = client.api.applications(client.user.id).guilds(guildId).commands(commandId);
+    command.permissions.put({
+        data: {
+            permissions: [
+                {
+                    id: '767803636926906419',
+                    type: 1, // 1 == role, 2 == user
+                    permission: true
+                }
+            ]   
+        }
+    })
+}
+
 client.on('ready', async () => {
     console.log(`I'm online, my name is ${client.user!.username}`);
     client.user!
@@ -26,42 +42,12 @@ client.on('ready', async () => {
     // @ts-ignore
     const commands = await getApp(guildId).commands.get()
     console.log(commands)
+
+    // @ts-ignore
+    const perms = await client.api.applications(client.user.id).guilds(guildId).commands('834327111384563724').permissions.get()
+    console.log(perms)
     
     // define a new slash command in the guild
-    await getApp(guildId).commands.post({
-        data: {
-            name: 'new',
-            description: 'Create a new suggestion',
-            options: [
-                {
-                    name: 'Type',
-                    description: 'Specify what type of suggestion this is',
-                    required: true,
-                    type: 3, // string
-                    choices: [
-                        {
-                            name: 'Discord',
-                            value: 'discord',
-                        },
-                        {
-                            name: 'In-game',
-                            value: 'in-game',
-                        },
-                        {
-                            name: 'Department',
-                            value: 'department'
-                        }
-                    ]
-                },
-                {
-                    name: 'Suggestion',
-                    description: "Describe your suggestion. Please provide any relevant links",
-                    required: true,
-                    type: 3, // string
-                },
-            ]
-        } 
-    })
     getApp(guildId).commands.post({
         data: {
             name: 'test',
@@ -137,9 +123,59 @@ client.on('ready', async () => {
         }
     })
 
+    getApp(guildId).commands.post({
+        data: {
+            name: 'suggestion',
+            description: 'All suggestion related commands', 
+            type: 2,
+            default_permission: false,
+            options: [
+                {
+                    name: 'new',
+                    type: 1,
+                    description: 'Create a new suggestion', 
+                    options: [
+                        {
+                            name: 'Type',
+                            type: 3,
+                            description: 'Type of suggestion',
+                            required: true,
+                            choices: [
+                                {
+                                    name: 'Discord',
+                                    value: 'discord'
+                                },
+                                {
+                                    name: 'In-game',
+                                    value: 'ingame'
+                                },
+                                {
+                                    name: 'Department',
+                                    value: 'department'
+                                }
+                            ]
+                        },
+                        {
+                            name: 'Suggestion',
+                            type: 3,
+                            description: 'Describe your suggestion.',
+                            required: true
+                        },
+                        {
+                            name: 'Channel',
+                            type: 7,
+                            description: 'Channel to post suggestion in',
+                            required: true
+                        }
+                    ]
+                }
+            ]
+        }
+    })
+
     
-    // Code to delete a slash command, replace numbers with application ID
-    //await getApp(guildId).commands('833299535886942209').delete()
+    // Code to delete a slash command, replace numbers with ID ( !! Not application ID !!)
+    // await getApp(guildId).commands('834319699025199134').delete()
     
     // @ts-ignore
     client.ws.on('INTERACTION_CREATE', async (interaction) => {
@@ -149,14 +185,12 @@ client.on('ready', async () => {
         const args: any = {}
 
         // Might make a class instead to accommodate for sub-commands
-        
-        console.log(interaction.id, interaction.data.id)
 
         //console.log(interaction)
 
         if (command === 'new') {
             if (options) {
-                for await (const option of options) {
+                for (const option of options) {
                     const { name, value } = option;
                     args[name] = value;
                 }
@@ -191,7 +225,7 @@ client.on('ready', async () => {
                                 content: 'Test',
                                 // tts: true/false,
                                 // embed: {
-                                //    title: 'Hello!*,
+                                //    title: 'Hello!',
                                 //    description: 'This is an embed'
                                 //}
                             }
@@ -207,6 +241,18 @@ client.on('ready', async () => {
                         break;
                 }
             }
+        } else if (command === 'suggestion') {
+            // editPermissions(guildId, '834327111384563724', {})
+            console.log(interaction)
+            defer(interaction);
+            setTimeout( async ()  => {
+                // @ts-ignore
+                await client.api.webhooks(interaction.application_id, interaction.token).messages['@original'].patch({
+                    data: {
+                        content: 'Hello :)'
+                    }
+                })
+            }, 5000)
         }
     })
 });

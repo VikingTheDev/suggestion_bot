@@ -8,6 +8,7 @@
     - /suggestion delete
     - /suggestion approve
     - /suggestion deny
+    - /suggestion config
     - /development in-progress suggestion
     - /development in-progress new
     - /development implemented
