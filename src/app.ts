@@ -24,7 +24,7 @@ const editPermissions = (guildId: string, commandId: string, data: object) => {
         data: {
             permissions: [
                 {
-                    id: '767803636926906419',
+                    id: '814621485058359298',
                     type: 1, // 1 == role, 2 == user
                     permission: true
                 }
@@ -39,90 +39,15 @@ client.on('ready', async () => {
         .setActivity('your suggestions', { type: "WATCHING" })
         .catch(console.error);
     
-    // @ts-ignore
-    const commands = await getApp(guildId).commands.get()
-    console.log(commands)
 
     // @ts-ignore
-    const perms = await client.api.applications(client.user.id).guilds(guildId).commands('834327111384563724').permissions.get()
-    console.log(perms)
+    //const commands = await getApp(guildId).commands.get()
+    // console.log(commands)
+
+    // @ts-ignore
+    //const perms = await client.api.applications(client.user.id).guilds(guildId).commands('834327111384563724').permissions.get()
+    //console.log(perms)
     
-    // define a new slash command in the guild
-    getApp(guildId).commands.post({
-        data: {
-            name: 'test',
-            description: 'Test for deferrals and permissions',
-            type: 2, // sub-command group
-            options: [
-                {
-                    name: 'new',
-                    description: 'Create new thing',
-                    type: 1, // sub-command
-                    options: [
-                        {
-                            name: 'Type',
-                            description: 'Type of thing you want to create',
-                            type: 3, // string
-                            required: true,
-                            choices: [
-                                {
-                                    name: 'Cool thing',
-                                    value: 'cool_thing'
-                                },
-                                {
-                                    name: 'Kinda cool thing',
-                                    value: 'kinda_cool_thing'
-                                },
-                                {
-                                    name: 'Uncool thing',
-                                    value: 'uncool_thing'
-                                }
-                            ]
-                        },
-                        {
-                            name: 'Content',
-                            description: 'Content used to create new thing',
-                            type: 3, // string
-                            required: true
-                        }
-                    ]
-                },
-                {
-                    name: 'delete',
-                    description: 'Edit thing',
-                    type: 1, // sub-command
-                    options: [
-                        {
-                            name: 'ID',
-                            description: 'ID of thing you want to edit',
-                            required: true,
-                            type: 3 // string
-                        },
-                        {
-                            name: 'Content',
-                            description: 'New content to replace old content with',
-                            required: true,
-                            type: 3 // string
-                        }
-                    ]
-                },
-                {
-                    name: 'edit',
-                    description: 'Delete thing',
-                    type: 1, // sub-command
-                    options: [
-                        {
-                            name: 'ID',
-                            description: 'ID of thing you want to delete',
-                            required: true,
-                            type: 3 // string
-                        }
-                    ]
-                }
-            ]
-        }
-    })
-
     getApp(guildId).commands.post({
         data: {
             name: 'suggestion',
@@ -143,15 +68,15 @@ client.on('ready', async () => {
                             choices: [
                                 {
                                     name: 'Discord',
-                                    value: 'discord'
+                                    value: 'Discord'
                                 },
                                 {
                                     name: 'In-game',
-                                    value: 'ingame'
+                                    value: 'In-game'
                                 },
                                 {
                                     name: 'Department',
-                                    value: 'department'
+                                    value: 'Department'
                                 }
                             ]
                         },
@@ -162,11 +87,18 @@ client.on('ready', async () => {
                             required: true
                         },
                         {
-                            name: 'Channel',
-                            type: 7,
-                            description: 'Channel to post suggestion in',
-                            required: true
-                        }
+                            name: 'Links',
+                            type: 3,
+                            description: 'Please provide any relevant links here',
+                            required: false
+                        } //,
+                        // {
+                        //     name: 'Channel',
+                        //     value: 'channel',
+                        //     type: 7,
+                        //     description: 'Channel to post suggestion in',
+                        //     required: true
+                        // }
                     ]
                 }
             ]
@@ -175,7 +107,7 @@ client.on('ready', async () => {
 
     
     // Code to delete a slash command, replace numbers with ID ( !! Not application ID !!)
-    // await getApp(guildId).commands('834319699025199134').delete()
+    // await getApp(guildId).commands('834002840614731806').delete()
     
     // @ts-ignore
     client.ws.on('INTERACTION_CREATE', async (interaction) => {
@@ -184,75 +116,41 @@ client.on('ready', async () => {
         
         const args: any = {}
 
+        for (const option of options[0].options) {
+            const { name, value } = option;
+            args[name] = value;
+        }
+        //console.log(interaction)
+        console.log(args)
+
         // Might make a class instead to accommodate for sub-commands
 
         //console.log(interaction)
 
-        if (command === 'new') {
-            if (options) {
-                for (const option of options) {
-                    const { name, value } = option;
-                    args[name] = value;
-                }
-                const embed = new DiscordJS.MessageEmbed()
-                    .setTitle(`${interaction.member.user.username} made a ${args.type} suggestion:`)
-                    .setDescription(args.suggestion)
-                    .setFooter('Made by VikingTheDev © 2021')
-                    .setTimestamp()
-                    .addField("Status: ", "Awaiting review")
-                reply(interaction, embed);
-            }
-            const embed = new DiscordJS.MessageEmbed()
-                .setTitle(`${interaction.member.user.username} made a ${args.type} suggestion:`)
-                .setDescription(args.suggestion)
-                .setFooter('Made by VikingTheDev © 2021')
-                .setTimestamp()
-                .addField("Status: ", "Awaiting review")
-            reply(interaction, embed)
-        } else if (command === 'test') {
-            if (options) {
-                for (const option of options[0].options) {
-                    const { name, value } = option;
-                    args[name] = value;
-                }
-                console.log(options[0].name, args);
-                switch (true) {
-                    case options[0].name === 'new': 
-                        defer(interaction);
-                        // @ts-ignore
-                        await client.api.webhooks(interaction.application_id, interaction.token).messages['@original'].patch({
-                            data: {
-                                content: 'Test',
-                                // tts: true/false,
-                                // embed: {
-                                //    title: 'Hello!',
-                                //    description: 'This is an embed'
-                                //}
-                            }
-                        })
-                        // setTimeout(() => {
-                        //     reply(interaction, 'Thing is too large!');
-                        // }, 5000)
-                        break;
-                    case options[0].name === 'edit': 
-                        break;
-                    case options[0].name === 'delete':
-                        defer(interaction);
-                        break;
-                }
-            }
-        } else if (command === 'suggestion') {
-            // editPermissions(guildId, '834327111384563724', {})
-            console.log(interaction)
+        if (command === 'suggestion') {
             defer(interaction);
             setTimeout( async ()  => {
+                const embed = new DiscordJS.MessageEmbed()
+                    .setTitle(`${interaction.member.user.username} made a new suggestion:`)
+                    .setFooter('Made by VikingTheDev © 2021')
+                    .setTimestamp()
+                    .addField('Suggestion: ', args.suggestion)
+                    if (args.links) {
+                        embed.addField('Links: ', args.links)
+                    }
+                    embed.addFields( 
+                        { name: "Status: ", value: "Awaiting review", inline: true },
+                        { name: 'Type', value: args.type, inline: true },
+                        { name: 'ID:', value: 4, inline: true }
+                    )
+                
+                let data = await createAPIMessage(interaction, embed);
+                // console.log(data)
                 // @ts-ignore
                 await client.api.webhooks(interaction.application_id, interaction.token).messages['@original'].patch({
-                    data: {
-                        content: 'Hello :)'
-                    }
+                    data
                 })
-            }, 5000)
+            }, 2000)
         }
     })
 });
