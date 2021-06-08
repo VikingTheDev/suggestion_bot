@@ -10,5 +10,6 @@
     "channels": {
         "suggestionChannels": ["774290125973618700"],
         "esSuggestionChannels": ["779691693897023488"]
-    }
+    },
+    "enableDebug": true
 }
