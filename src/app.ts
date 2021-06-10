@@ -1,7 +1,7 @@
 // Suggestion bot v2.0.0
 // Written by VikingTheDev
 
-import DiscordJS, {BaseClient} from "discord.js";
+// Import helper functions
 const { 
     getApp,
     editPermissions,
@@ -11,9 +11,14 @@ const {
     createAPIMessage,
 } = require('./helpers/api');
 const { updateCmds, getCmds, getPerms } = require("./helpers/commands");
+
+// Import DiscordJS and set up the bot
+import DiscordJS, {BaseClient} from "discord.js";
 const client = new DiscordJS.Client({
     partials: ['MESSAGE', 'REACTION', 'CHANNEL', 'USER', 'GUILD_MEMBER']
 }); 
+
+// Import the config file
 import * as config from "./config.json";
 const guildId = config.bot.guildID;
 
@@ -35,7 +40,11 @@ client.on('ready', async () => {
     //         permission: true,
     //     }
     // ])
+
+    // Get perms for a role
     //console.log(await getPerms(client, guildId, '851865111671996476'))
+
+    // Get all commands in a guild
     //console.log(await getCmds(client, guildId));
     
     // @ts-ignore
@@ -54,7 +63,7 @@ client.on('ready', async () => {
                 const { name, value } = option;
                 args[name] = value;
             }
-            console.log(args)
+            console.log(interaction)
             
             defer(client, interaction);
             setTimeout( async ()  => {
