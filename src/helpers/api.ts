@@ -1,6 +1,6 @@
 import { APIMessage } from "discord.js";
 
-const getApp = (client: any, guildId: string) => {
+export const getApp = (client: any, guildId: string) => {
     let app = client.api.applications(client.user.id)
     if (guildId) {
         app.guilds(guildId)
@@ -8,15 +8,15 @@ const getApp = (client: any, guildId: string) => {
     return app
 }
 
-interface perms extends Array<permObj>{};
+export interface perms extends Array<permObj>{};
 
-interface permObj {
+export interface permObj {
     id: string;
     type: number; // 1 = role, 2 = user
     permission: boolean;
 };
 
-const editPermissions = (client: any, guildId: string, commandId: string, data: perms) => {
+export const editPermissions = (client: any, guildId: string, commandId: string, data: perms) => {
     // @ts-ignore
     let command = client.api.applications(client.user.id).guilds(guildId).commands(commandId);
     command.permissions.put({
@@ -26,7 +26,7 @@ const editPermissions = (client: any, guildId: string, commandId: string, data: 
     })
 }
 
-const reply = async (client: any, interaction: object, response: string | object) => { 
+export const reply = async (client: any, interaction: object, response: string | object) => { 
     let data: any = {
         content: response
     }
@@ -45,7 +45,7 @@ const reply = async (client: any, interaction: object, response: string | object
     })
 }
 
-const defer = async (client: any, interaction: object) => {
+export const defer = async (client: any, interaction: object) => {
     // @ts-expect-error
     client.api.interactions(interaction.id, interaction.token).callback.post({
         data: {
@@ -54,7 +54,7 @@ const defer = async (client: any, interaction: object) => {
     })
 }
 
-const editDefer = async (client: any, interaction: object, response: string | object) => {
+export const editDefer = async (client: any, interaction: object, response: string | object) => {
     let data: any = {
         content: response
     }
@@ -69,7 +69,7 @@ const editDefer = async (client: any, interaction: object, response: string | ob
     })
 }
 
-const createAPIMessage = async (client: any, interaction: any, content: any) => {
+export const createAPIMessage = async (client: any, interaction: any, content: any) => {
     const { data, files } = await APIMessage.create(
         client.channels.resolve(interaction.channel_id),
         content
@@ -78,13 +78,4 @@ const createAPIMessage = async (client: any, interaction: any, content: any) => 
         .resolveFiles()
     
     return { ...data, files }
-}
-
-module.exports = {
-    getApp,
-    editPermissions,
-    reply,
-    defer,
-    editDefer,
-    createAPIMessage
 }

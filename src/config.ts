@@ -1,4 +1,4 @@
-{
+export default {
     "bot": {
         "token": "ODA3MjU3MzQzODIwNTYyNDgz.YB1W_A.zYwFJxb76hVgQc-W81dlxULahq0",
         "guildID": "739107232498843728"

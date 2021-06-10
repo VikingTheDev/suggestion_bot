@@ -1,25 +1,51 @@
 // Suggestion bot v2.0.0
 // Written by VikingTheDev
 
+/** TODO:
+ *   - Finish the database class to allow for reading and writing to a 
+ *     JSON file, adding new entries in accordence to the constructor, 
+ *     and getting the length of the "DB"
+ *   - Rewrite api.ts and commands.ts to a single class with methods
+ *     for interacting with commands, messages and permissions
+ *     (probably more to come). Will also need methods for sending (and
+ *     altering) the embed to another channel uppon approval/denial.
+ *   - Move command handelers to cmd_handlers.ts and make it a class.
+ *   - Add new commands and add their command handlers to the class.
+ *     Commands needed: (probably more to come)
+ *        - new type suggestion links(optional)
+ *        - approve id
+ *        - deny id
+ *        - in-progress id
+ *        - implemented id
+ *        - delete id
+ *        - config
+ *            - set-channel suggestions||approved||denied||in-progress||implemented||all channel
+ *            - perms
+ *                - add user||role command
+ *                - remove user||role command
+ */
+
+
 // Import helper functions
-const { 
+import { 
     getApp,
     editPermissions,
     reply,
     defer,
     editDefer,
     createAPIMessage,
-} = require('./helpers/api');
-const { updateCmds, getCmds, getPerms } = require("./helpers/commands");
+} from "./helpers/api";
+import { updateCmds, getCmds, getPerms } from "./helpers/commands";
 
 // Import DiscordJS and set up the bot
 import DiscordJS, {BaseClient} from "discord.js";
 const client = new DiscordJS.Client({
     partials: ['MESSAGE', 'REACTION', 'CHANNEL', 'USER', 'GUILD_MEMBER']
-}); 
+});
+
 
 // Import the config file
-import * as config from "./config.json";
+import config from "./config"
 const guildId = config.bot.guildID;
 
 client.on('ready', async () => {
@@ -49,21 +75,24 @@ client.on('ready', async () => {
     
     // @ts-ignore
     client.ws.on('INTERACTION_CREATE', async (interaction) => {
-        const { name, options } = interaction.data;
+        const { options } = interaction.data;
+        const { name } = interaction.data.options[0]
+
         let command;
         if (name) {
             command = name.toLowerCase();
         }
         
 
-        if (command === 'suggestion') {
+        if (command === 'new') {
             const args: any = {}
 
             for (const option of options[0].options) {
                 const { name, value } = option;
                 args[name] = value;
             }
-            console.log(interaction)
+
+            console.log(interaction.data.options[0])
             
             defer(client, interaction);
             setTimeout( async ()  => {
@@ -91,6 +120,5 @@ client.on('ready', async () => {
         }
     })
 });
-
 
 client.login(config.bot.token);

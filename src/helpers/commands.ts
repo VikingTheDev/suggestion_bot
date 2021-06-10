@@ -1,7 +1,7 @@
-const { getApp } = require("./api");
-import { enableDebug } from "../config.json";
+import { getApp } from "./api";
+import config from "../config";
 
-const updateCmds = (client: any, guildId: string) => {
+export const updateCmds = (client: any, guildId: string) => {
     getApp(client, guildId).commands.post({
         data: {
             name: 'suggestion',
@@ -60,12 +60,12 @@ const updateCmds = (client: any, guildId: string) => {
     })
 }
 
-const deleteCmd = async (client: any, guildId: string, cmdId:string) => {
+export const deleteCmd = async (client: any, guildId: string, cmdId:string) => {
     try {
         await getApp(client, guildId).commands(cmdId).delete();
         return 'done';
     } catch (err) {
-        if (enableDebug) {
+        if (config.enableDebug) {
             return err;
         } else {
             return 'failed';
@@ -73,7 +73,7 @@ const deleteCmd = async (client: any, guildId: string, cmdId:string) => {
     }
 };
 
-const getCmds = async (client: any, guildId: string) => {
+export const getCmds = async (client: any, guildId: string) => {
     let args: any = [];
     const commands = await getApp(client, guildId).commands.get();
     commands.map((command: any) => {
@@ -85,22 +85,16 @@ const getCmds = async (client: any, guildId: string) => {
     return args;
 };
 
-const getPerms = async (client:any, guildId: string, cmdId: string) => {
+export const getPerms = async (client:any, guildId: string, cmdId: string) => {
     try {
         const perms: object = await getApp(client, guildId)
             .commands(cmdId).permissions.get();
         return perms;
     } catch (error) {
-        if (enableDebug) {
+        if (config.enableDebug) {
             return error;
         } else {
             return null;
         }
     }
-};
-
-module.exports = {
-    updateCmds,
-    getCmds,
-    getPerms
 };
