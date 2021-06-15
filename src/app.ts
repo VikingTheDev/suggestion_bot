@@ -27,13 +27,11 @@
 
 
 // Import helper functions
-import { 
-    API
-} from "./classes/api";
-//import { updateCmds, getCmds, getPerms } from "./classes/commands";
+import { API } from "./classes/api";
+import { jsonDB } from "./db/database";
 
 // Import DiscordJS and set up the bot
-import DiscordJS, {BaseClient} from "discord.js";
+import DiscordJS, { BaseClient } from "discord.js";
 const client = new DiscordJS.Client({
     partials: ['MESSAGE', 'REACTION', 'CHANNEL', 'USER', 'GUILD_MEMBER']
 });
@@ -48,7 +46,8 @@ client.on('ready', async () => {
     client.user!
         .setActivity('your suggestions', { type: "WATCHING" })
         .catch(console.error);
-    
+
+
     // await api.commands().add({
     //     name: 'new',
     //     description: 'Create a new suggestion',
