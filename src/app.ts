@@ -29,6 +29,7 @@
 // Import helper functions
 import { API } from "./classes/api";
 import { jsonDB } from "./db/database";
+import * as commands from "./commands/commands";
 
 // Import DiscordJS and set up the bot
 import DiscordJS, { BaseClient } from "discord.js";
@@ -40,6 +41,8 @@ const client = new DiscordJS.Client({
 import config from "./config"
 const guildId = config.bot.guildID;
 
+const api = new API(client, guildId);
+
 
 client.on('ready', async () => {
     console.log(`I'm online, my name is ${client.user!.username}`);
@@ -48,123 +51,63 @@ client.on('ready', async () => {
         .catch(console.error);
 
 
-    // await api.commands().add({
-    //     name: 'new',
-    //     description: 'Create a new suggestion',
-    //     default_permission: true,
-    //     type: 1,
-    //     options: [
-    //         {
-    //             name: 'suggestion',
-    //             type: 3,
-    //             description: 'Describe your suggestion.',
-    //             required: true
-    //         },
-    //     ],
-    // }) 
 
-    // await api.commands().remove('new');
+        // @ts-expect-error
+        let command = client.api.applications(client.user.id).guilds(guildId).commands('855196501205581856');
+        // !! USE THIS TO ADD SOME PERMS TO EACH COMMAND WHEN CREATING IT, IF NOT SHIT WON'T WORK!!!!!
+        // await command.permissions.put({
+        //     data: {
+        //         permissions: [
+        //             {
+        //                 id: '767803636926906419',
+        //                 type: 1, // 1 == role, 2 == user
+        //                 permission: true
+        //             }
+        //         ]   
+        //     }
+        // })
 
-    // console.log(await api.commands().get());
 
+    // '/applications/807257343820562483/guilds/739107232498843728/commands/855196501205581856/permissions'
     // @ts-ignore
     client.ws.on('INTERACTION_CREATE', async (interaction) => {
-        
-        // if (command === 'new') {
-        //     const args: any = {}
+        const { options, name, channel_id } = interaction.data;
+    
+        let command = name ? name.toLowerCase() : null;
 
-        //     for (const option of options[0].options) {
-        //         const { name, value } = option;
-        //         args[name] = value;
-        //     }
+        if (command === 'new') {
+            const args: any = {}
 
-        //     console.log(interaction.data.options[0])
+            for (const option of options) {
+                const { name, value } = option;
+                args[name] = value;
+            }
             
-            // defer(client, interaction);
-            // setTimeout( async ()  => {
-            //     const embed = new DiscordJS.MessageEmbed()
-            //         .setTitle(`${interaction.member.user.username} made a new suggestion:`)
-            //         .setFooter('Made by VikingTheDev © 2021')
-            //         .setTimestamp()
-            //         .addField('Suggestion: ', args.suggestion)
-            //         if (args.links) {
-            //             embed.addField('Links: ', args.links)
-            //         }
-            //         embed.addFields( 
-            //             { name: "Status: ", value: "Awaiting review", inline: true },
-            //             { name: 'Type', value: args.type, inline: true },
-            //             { name: 'ID:', value: 4, inline: true }
-            //         )
+            api.interaction(interaction).defer();
+            setTimeout( async ()  => {
+                const embed = new DiscordJS.MessageEmbed()
+                    .setTitle(`${interaction.member.user.username} made a new suggestion:`)
+                    .setFooter('Made by VikingTheDev © 2021')
+                    .setTimestamp()
+                    .addField('Suggestion: ', args.suggestion)
+                    if (args.links) {
+                        embed.addField('Links: ', args.links)
+                    }
+                    embed.addFields( 
+                        { name: "Status: ", value: "Awaiting review", inline: true },
+                        { name: 'Type', value: args.type, inline: true },
+                        { name: 'ID:', value: 4, inline: true }
+                    )
                 
 
-            //     let data = await createAPIMessage(client, interaction, embed);
-            //     // @ts-ignore
-            //     await client.api.webhooks(interaction.application_id, interaction.token).messages['@original'].patch({
-            //         data
-            //     })
-            // }, 2000)
-        //}
+                let data = await api.createAPIMessage(interaction, embed);
+                // @ts-ignore
+                await client.api.webhooks(interaction.application_id, interaction.token).messages['@original'].patch({
+                    data
+                })
+            }, 2000)
+        }
     })
 });
 
 client.login(config.bot.token);
-
-// command setup for new:
-// export const updateCmds = (client: any, guildId: string) => {
-//     getApp(client, guildId).commands.post({
-//         data: {
-//             name: 'suggestion',
-//             description: 'All suggestion related commands', 
-//             type: 2,
-//             default_permission: true,
-//             options: [
-//                 {
-//                     name: 'new',
-//                     type: 1,
-//                     description: 'Create a new suggestion', 
-//                     options: [
-//                         {
-//                             name: 'type',
-//                             type: 3,
-//                             description: 'Type of suggestion',
-//                             required: true,
-//                             choices: [
-//                                 {
-//                                     name: 'Discord',
-//                                     value: 'Discord'
-//                                 },
-//                                 {
-//                                     name: 'In-game',
-//                                     value: 'In-game'
-//                                 },
-//                                 {
-//                                     name: 'Department',
-//                                     value: 'Department'
-//                                 }
-//                             ]
-//                         },
-//                         {
-//                             name: 'suggestion',
-//                             type: 3,
-//                             description: 'Describe your suggestion.',
-//                             required: true
-//                         },
-//                         {
-//                             name: 'links',
-//                             type: 3,
-//                             description: 'Please provide any relevant links here',
-//                             required: false
-//                         } //,
-//                         // {
-//                         //     name: 'Channel',
-//                         //     value: 'channel',
-//                         //     type: 7,
-//                         //     description: 'Channel to post suggestion in',
-//                         //     required: true
-//                         // }
-//                     ]
-//                 }
-//             ]
-//         }
-//     })
-// }

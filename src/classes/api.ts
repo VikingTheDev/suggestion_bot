@@ -45,7 +45,7 @@ export class API {
     
 
     /**
-     * Methods for interacting the permissions for a command.
+     * Methods for interacting with the permissions for a command.
      * @param {string} id The identifier of the command you want to interact with permissions on.
      * @returns Methods for interacting with the permissions of a command.
      * @example const perms = await api.permissions(commandId);
@@ -53,9 +53,8 @@ export class API {
 
     permissions = (commandId:string) => {
         const getApp = this.getApp;
-        let x = this.client.api.applications(this.client.user.id)
-            .guilds(this.guildId).commands(commandId).permissions.get();
-        let perms: Array<{ id: string; type: number; permission: boolean; }> = x.permissions;
+        const command = getApp().commands(commandId);
+        let perms: Array<{ id: string; type: number; permission: boolean; }> = command.permissions.get();
 
         return {
 
@@ -66,7 +65,7 @@ export class API {
              */
 
             get: async () => {
-                return perms;
+                return await perms;
             },
 
             /**
@@ -337,7 +336,7 @@ export class API {
             /**
              * Method for removing a command from the guild. commandId HAS to be undefined.
              * @param {string} cmdName The name of the command you want to remove.
-             * @example api.commands().remove('new);
+             * @example api.commands().remove('new');
              */
 
             // consider adding another method for when commandId is defined that allows you to delete a command without passing the name.
