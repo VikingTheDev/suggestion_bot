@@ -1,6 +1,8 @@
 // Suggestion bot v2.0.0
 // Written by VikingTheDev for use in Sunshine State Roleplay
 
+// TODO: Add a method called init to the API Class that adds all commands and sets up perms.
+
 /** TODO:
  *   - Finish the database class to allow for reading and writing to a 
  *     JSON file, adding new entries in accordence to the constructor, 
@@ -29,7 +31,6 @@
 // Import helper functions
 import { API } from "./classes/api";
 import { jsonDB } from "./db/database";
-import * as commands from "./commands/commands";
 
 // Import DiscordJS and set up the bot
 import DiscordJS, { BaseClient } from "discord.js";
@@ -51,29 +52,14 @@ client.on('ready', async () => {
         .catch(console.error);
 
 
-
-        // @ts-expect-error
-        let command = client.api.applications(client.user.id).guilds(guildId).commands('855196501205581856');
-        // !! USE THIS TO ADD SOME PERMS TO EACH COMMAND WHEN CREATING IT, IF NOT SHIT WON'T WORK!!!!!
-        // await command.permissions.put({
-        //     data: {
-        //         permissions: [
-        //             {
-        //                 id: '767803636926906419',
-        //                 type: 1, // 1 == role, 2 == user
-        //                 permission: true
-        //             }
-        //         ]   
-        //     }
-        // })
+    await api.init(); 
 
 
-    // '/applications/807257343820562483/guilds/739107232498843728/commands/855196501205581856/permissions'
     // @ts-ignore
     client.ws.on('INTERACTION_CREATE', async (interaction) => {
         const { options, name, channel_id } = interaction.data;
-    
-        let command = name ? name.toLowerCase() : null;
+
+        let command = name.toLowerCase();
 
         if (command === 'new') {
             const args: any = {}

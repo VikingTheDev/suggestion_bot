@@ -8,8 +8,7 @@ export default {
         "esRoles": ["813879683295871036", "777626206718787606"]
     },
     "channels": {
-        "suggestionChannels": ["774290125973618700"],
-        "esSuggestionChannels": ["779691693897023488"]
+        "suggestionChannel": ["819482635469979649"],
     },
     "enableDebug": true
 }
