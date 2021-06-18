@@ -1,31 +1,7 @@
 // Suggestion bot v2.0.0
 // Written by VikingTheDev for use in Sunshine State Roleplay
 
-// TODO: Add a method called init to the API Class that adds all commands and sets up perms.
-
-/** TODO:
- *   - Finish the database class to allow for reading and writing to a 
- *     JSON file, adding new entries in accordence to the constructor, 
- *     and getting the length of the "DB"
- *   - Rewrite api.ts and commands.ts to a single class with methods
- *     for interacting with commands, messages and permissions
- *     (probably more to come). Will also need methods for sending (and
- *     altering) the embed to another channel uppon approval/denial.
- *   - Move command handelers to cmd_handlers.ts and make it a class.
- *   - Add new commands and add their command handlers to the class.
- *     Commands needed: (probably more to come)
- *        - new type suggestion links(optional)
- *        - approve id
- *        - deny id
- *        - in-progress id
- *        - implemented id
- *        - delete id
- *        - config
- *            - set-channel suggestions||approved||denied||in-progress||implemented||all channel
- *            - perms
- *                - add user||role command
- *                - remove user||role command
- */
+// TODO: Finish command handelers
 
 
 // Import helper functions
