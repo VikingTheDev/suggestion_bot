@@ -1,16 +1,18 @@
 // Suggestion bot v2.0.0
 // Written by VikingTheDev for use in Sunshine State Roleplay
 
-// TODO: Finish command handelers
+// TODO: Finish command handlers. Consider how the database should be done 
+// TODO (to minimize file size rewriting CreateAPIMessage() to accepting an 
+// TODO interaction OR a channel ID would be needed.)
 
 
 // Import helper functions
-import { API } from "./classes/api";
-import { jsonDB } from "./db/database";
+import { API } from "./helpers/api";
+import { commandHandler } from "./helpers/cmd_handlers";
 
 // Import DiscordJS and set up the bot
-import DiscordJS, { BaseClient } from "discord.js";
-const client = new DiscordJS.Client({
+import DiscordJS, { MessageEmbed } from "discord.js";
+export const client = new DiscordJS.Client({
     partials: ['MESSAGE', 'REACTION', 'CHANNEL', 'USER', 'GUILD_MEMBER']
 });
 
@@ -18,7 +20,7 @@ const client = new DiscordJS.Client({
 import config from "./config"
 const guildId = config.bot.guildID;
 
-const api = new API(client, guildId);
+export const api = new API(client, guildId);
 
 
 client.on('ready', async () => {
@@ -28,47 +30,11 @@ client.on('ready', async () => {
         .catch(console.error);
 
 
-    await api.init(); 
-
+    await api.init();
 
     // @ts-ignore
     client.ws.on('INTERACTION_CREATE', async (interaction) => {
-        const { options, name, channel_id } = interaction.data;
-
-        let command = name.toLowerCase();
-
-        if (command === 'new') {
-            const args: any = {}
-
-            for (const option of options) {
-                const { name, value } = option;
-                args[name] = value;
-            }
-            
-            api.interaction(interaction).defer();
-            setTimeout( async ()  => {
-                const embed = new DiscordJS.MessageEmbed()
-                    .setTitle(`${interaction.member.user.username} made a new suggestion:`)
-                    .setFooter('Made by VikingTheDev © 2021')
-                    .setTimestamp()
-                    .addField('Suggestion: ', args.suggestion)
-                    if (args.links) {
-                        embed.addField('Links: ', args.links)
-                    }
-                    embed.addFields( 
-                        { name: "Status: ", value: "Awaiting review", inline: true },
-                        { name: 'Type', value: args.type, inline: true },
-                        { name: 'ID:', value: 4, inline: true }
-                    )
-                
-
-                let data = await api.createAPIMessage(interaction, embed);
-                // @ts-ignore
-                await client.api.webhooks(interaction.application_id, interaction.token).messages['@original'].patch({
-                    data
-                })
-            }, 2000)
-        }
+        commandHandler(interaction);
     })
 });
 

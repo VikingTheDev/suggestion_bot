@@ -5,8 +5,8 @@ const file = __dirname + '/db.json';
 
 interface dbObj {
         id: Number;
-        appId: String;
-        token: String;
+        interaction: object;
+        embed: object;
 }
 
 interface findCb {
@@ -75,8 +75,7 @@ export const jsonDB = {
             }
         })
     },
-
-
+ 
     /**
      * Method for finding an entry using it's id.
      * @param {number} id The id of the entry you want to find.
@@ -110,9 +109,9 @@ export const jsonDB = {
      */
 
     length: async () => {
-        let res;
+        let res: number;
         await jsonfile.readFile(file)
-            .then(obj => {res = obj})
+            .then(obj => {res = obj.messages.length})
             .catch(error => console.log(error))
         return res;
     }

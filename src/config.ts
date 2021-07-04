@@ -1,6 +1,6 @@
 export default {
     "bot": {
-        "token": "ODA3MjU3MzQzODIwNTYyNDgz.YB1W_A.zYwFJxb76hVgQc-W81dlxULahq0",
+        "token": "ODU4Nzg1ODU4Mzc4Mzk5Nzc0.YNjMqA.lK2VHHuZZ7GS4iuSHea4HQ-rres",
         "guildID": "739107232498843728"
     },
     "roles": {

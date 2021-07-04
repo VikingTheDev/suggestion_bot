@@ -1,4 +1,3 @@
-import { throws } from "assert";
 import { APIMessage } from "discord.js";
 import * as commands from "../commands/commands";
 
@@ -148,6 +147,7 @@ export class API {
                  */
 
                 reply: async (response: string | object) => {
+                    
                     let data: any = {
                         content: response
                     }
@@ -388,7 +388,7 @@ export class API {
      * @returns An API Message.
      */
 
-    createAPIMessage = async (interaction: any, content: any) => {
+    createAPIMessage = async (interaction: any , content: any) => {
         const { data, files } = await APIMessage.create(
             this.client.channels.resolve(interaction.channel_id),
             content

@@ -1,7 +1,6 @@
 export const new_suggestion = {
     name: 'new',
     description: 'Create a new suggestion',
-    type: 1,
     default_permission: true,
     options: [
         {
@@ -42,7 +41,6 @@ export const new_suggestion = {
 export const suggestion = {
     name: 'suggestion',
     description: 'Interact with a suggestion',
-    type: 1,
     default_permission: false,
     options: [
         {
@@ -85,7 +83,6 @@ export const suggestion = {
 export const config = {
     name: 'config',
     description: 'Change the configuration for commands.',
-    type: 2,
     default_permission: false,
     options: [
         {
