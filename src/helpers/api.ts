@@ -30,6 +30,14 @@ export interface API {
     commandId: string;
 }
 
+export interface interactionObj {
+    id: string;
+    appId: string;
+    token: string;
+    channelId: string;
+    guildId: string;
+}
+
 export class API {
 
     /**
@@ -124,18 +132,8 @@ export class API {
      * @example const interaction = await api.interaction(interaction);
      */
 
-    interaction = (interaction: any) => {
+    interaction = (obj: interactionObj) => {
         const client = this.client, createAPIMessage = this.createAPIMessage;
-        const { options, name, channel_id } = interaction.data;
-    
-        let command = name ? name.toLowerCase() : null;
-
-        const args: any = {}
-
-        for (const option of options) {
-            const { name, value } = option;
-            args[name] = value;
-        }
 
         // think about adding some error handling (try catch blocks and returning status shit)
         return {
@@ -154,10 +152,10 @@ export class API {
                 
                     // Check for embeds
                     if(typeof response === 'object') {
-                        data = await createAPIMessage(interaction, response);
+                        data = await createAPIMessage(obj.channelId, response);
                     };
                 
-                    client.api.interactions(interaction.id, interaction.token).callback.post({
+                    client.api.interactions(obj.id, obj.token).callback.post({
                         data: {
                             type: 4,
                             data,
@@ -171,7 +169,7 @@ export class API {
                  */
 
                 defer: () => {
-                    client.api.interactions(interaction.id, interaction.token).callback.post({
+                    client.api.interactions(obj.id, obj.token).callback.post({
                         data: {
                             type: 5,
                         }
@@ -191,10 +189,10 @@ export class API {
                 
                     // Check for embeds
                     if(typeof response === 'object') {
-                        data = await createAPIMessage(interaction, response);
+                        data = await createAPIMessage(obj.channelId, response);
                     };
 
-                    await client.api.webhooks(interaction.application_id, interaction.token).messages['@original'].patch({
+                    await client.api.webhooks(obj.appId, obj.token).messages['@original'].patch({
                         data
                     })
                 },
@@ -205,7 +203,7 @@ export class API {
                  */
 
                 deleteOriginal: async () => {
-                    await client.api.webhooks(interaction.application_id, interaction.token).messages['@original'].delete();
+                    await client.api.webhooks(obj.appId, obj.token).messages['@original'].delete();
                 },
 
                 /**
@@ -221,10 +219,10 @@ export class API {
 
                     // Check for embeds
                     if (typeof response === 'object') {
-                        data = await createAPIMessage(interaction, response);
+                        data = await createAPIMessage(obj.channelId, response);
                     }
 
-                    await client.api.webhooks(interaction.application_id, interaction.token).post({
+                    await client.api.webhooks(obj.appId, obj.token).post({
                         data
                     })
                 },
@@ -243,10 +241,10 @@ export class API {
                 
                     // Check for embeds
                     if(typeof response === 'object') {
-                        data = await createAPIMessage(interaction, response);
+                        data = await createAPIMessage(obj.channelId, response);
                     };
 
-                    await client.api.webhooks(interaction.application_id, interaction.token).messages[msgId].patch({
+                    await client.api.webhooks(obj.appId, obj.token).messages[msgId].patch({
                         data
                     })
                 },
@@ -258,26 +256,8 @@ export class API {
                  */
 
                 deleteFollowup: async (msgId: string) => {
-                    await client.api.webhooks(interaction.application_id, interaction.token).messages[msgId].delete();
-                },
-
-                /**
-                 * Returns the name of the command.
-                 */
-
-                command,
-
-                /**
-                 * Returns the arguments passed with the command.
-                 */
-            
-                args,
-
-                /**
-                 * Return the ID of the channel the interaction was created in.
-                 */
-
-                channel_id,
+                    await client.api.webhooks(obj.appId, obj.token).messages[msgId].delete();
+                }
             }
     }
 
@@ -388,9 +368,9 @@ export class API {
      * @returns An API Message.
      */
 
-    createAPIMessage = async (interaction: any , content: any) => {
+    createAPIMessage = async (channelId: string , content: any) => {
         const { data, files } = await APIMessage.create(
-            this.client.channels.resolve(interaction.channel_id),
+            this.client.channels.resolve(channelId),
             content
         )
             .resolveData()

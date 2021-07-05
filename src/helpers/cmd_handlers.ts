@@ -4,8 +4,16 @@ import { MessageEmbed } from "discord.js";
 
 export const commandHandler = async (interaction: any) => {
     const { options, name } = interaction.data;
-    const { guild_id, channel_id, token, application_id } = interaction;
-    let command = name.toLowerCase();
+    const { guild_id, channel_id, token, id, application_id } = interaction;
+    const command = name.toLowerCase();
+    const intObj = { 
+        id,
+        appId: application_id,
+        token,
+        channelId: channel_id,
+        guildId: guild_id
+    };
+    console.log(interaction)
     if (command === 'new') {
         const args: any = {}
 
@@ -14,7 +22,7 @@ export const commandHandler = async (interaction: any) => {
                 args[name] = value;
             }
             
-            api.interaction(interaction).defer();
+            api.interaction(intObj).defer();
             setTimeout( async ()  => {
                 let id: number = await jsonDB.length() + 1;
                 const embed = new MessageEmbed()
@@ -31,14 +39,14 @@ export const commandHandler = async (interaction: any) => {
                         { name: 'ID:', value: id, inline: true }
                     )
                 
-                let data = await api.createAPIMessage(interaction, embed);
+                let data = await api.createAPIMessage(interaction.channel_id, embed);
                 // @ts-ignore
                 await client.api.webhooks(interaction.application_id, interaction.token).messages['@original'].patch({
                     data
                 }).then ( () => {
                         jsonDB.add({
                             id,
-                            interaction,
+                            data: intObj,
                             embed
                         });
                     }); 

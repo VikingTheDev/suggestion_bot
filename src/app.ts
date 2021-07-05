@@ -1,9 +1,7 @@
 // Suggestion bot v2.0.0
 // Written by VikingTheDev for use in Sunshine State Roleplay
 
-// TODO: Finish command handlers. Consider how the database should be done 
-// TODO (to minimize file size rewriting CreateAPIMessage() to accepting an 
-// TODO interaction OR a channel ID would be needed.)
+// TODO: Finish command handlers.
 
 
 // Import helper functions

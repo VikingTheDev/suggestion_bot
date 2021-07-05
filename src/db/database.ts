@@ -1,11 +1,12 @@
 import * as jsonfile from "jsonfile";
 import * as dat from "./db.json";
+import { interactionObj } from "../helpers/api";
 
 const file = __dirname + '/db.json';
 
 interface dbObj {
         id: Number;
-        interaction: object;
+        data: interactionObj;
         embed: object;
 }
 
