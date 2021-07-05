@@ -1,11 +1,13 @@
 import * as jsonfile from "jsonfile";
-import * as dat from "./db.json";
+import * as neededforbuiling from "./db.json";
+import * as neededforbuiling2 from "./channels.json";
 import { interactionObj } from "../helpers/api";
 
 const file = __dirname + '/db.json';
+const channelFile = __dirname + '/channels.json';
 
 interface dbObj {
-        id: Number;
+        id: number;
         data: interactionObj;
         embed: object;
 }
@@ -23,6 +25,7 @@ interface readCb {
 
 // ! Weird bug: Calling .delete() and .findById() at the same time for 
 // ! the same ID will wipe the .json file if the entry does not exist.
+
 
 /**
  * Contains methods for interacting with the local JSON database
@@ -50,6 +53,7 @@ export const jsonDB = {
             } else {
                 array.push(obj);
             }
+
             jsonfile.writeFile(file, { messages: array }, { spaces: 1 }, (err) => {
                 if (err) console.error(err);
             })
@@ -63,7 +67,7 @@ export const jsonDB = {
      * @example jsonDB.delete(id);
      */
 
-    delete: (id: Number) => {
+    delete: (id: number) => {
         dbRead(data => {
             let array = data.messages;
             array = array.filter(entry => entry.id != id);
@@ -74,6 +78,20 @@ export const jsonDB = {
                     if (err) console.error(err);
                 })
             }
+        })
+    },
+
+    update: (obj: dbObj) => {
+        dbRead(data => {
+            let array = data.messages;
+            for (let x in array) {
+                if (obj.id === array[x].id) {
+                    array[x] = obj;
+                }
+            }
+            jsonfile.writeFile(file, { messages: array }, { spaces: 1 }, (err) => {
+                if (err) console.error(err);
+            });
         })
     },
  
@@ -113,10 +131,46 @@ export const jsonDB = {
         let res: number;
         await jsonfile.readFile(file)
             .then(obj => {res = obj.messages.length})
-            .catch(error => console.log(error))
+            .catch(error => console.error(error))
         return res;
+    },
+
+    /**
+     * Method for updating the channelId for a interaction (Used for responses)
+     * @param {('approve' | 'delete' | 'deny' | 'implemented' | 'inprogress')} interactionType Type of interaction to change channelId for.
+     * @param {string} channelId The channelId you want to change to.
+     * @example jsonDB.updateChannel('approve', channelId);
+     */
+
+    updateChannel: async (interactionType: string, channelId: string) => {
+        let data;
+        await jsonfile.readFile(channelFile)
+            .then(obj => { data = obj })
+            .catch(error => console.error(error));
+        // @ts-expect-error
+        data[interactionType] = channelId;
+        jsonfile.writeFile(channelFile, data, { spaces: 1 }, (err) => {
+            if (err) console.error(err);
+        })
+    },
+
+    /**
+     * 
+     * @param {('approve' | 'delete' | 'deny' | 'implemented' | 'inprogress')} interactionType Type of interaction you want to get the channelId for
+     * @returns a channelId
+     */
+
+    getChannel: async (interactionType: string) => {
+        let data;
+        await jsonfile.readFile(channelFile)
+            .then(obj => { data = obj })
+            .catch(error => console.error(error));
+        // @ts-expect-error
+        return data[interactionType];
     }
 }
+
+
 
 
 /**
