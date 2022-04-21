@@ -1,21 +1,19 @@
 {
-  "name": "suggestion_bot",
+  "name": "suggestionbot",
   "version": "2.0.0",
-  "description": "",
-  "main": "index.js",
+  "description": "Suggestion bot.",
+  "main": "src/index.js",
   "scripts": {
-    "start": "nodemon ./dist/app.js"
+    "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
   "author": "VikingTheDev",
-  "license": "MIT License",
+  "license": "ISC",
   "dependencies": {
-    "discord.js": "^12.5.3",
+    "@sapphire/time-utilities": "^1.7.4",
+    "colorette": "^2.0.16",
+    "discord.js": "^13.6.0",
+    "dotenv": "^16.0.0",
     "jsonfile": "^6.1.0"
-  },
-  "devDependencies": {
-    "@types/jsonfile": "^6.0.0",
-    "@types/node": "^14.14.41",
-    "tslib": "^2.2.0"
   }
 }
