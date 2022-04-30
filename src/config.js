@@ -1,14 +1,14 @@
 const config = {
-   "settings": {
+   settings: {
         "prefix": "!",
-        "guildId": "SERVER_ID",
+        "guildId": "GUILD_ID",
         "memberRole": "member",
         "systemNotice": "true",
         "modRoles": [ // Name of the roles you want to have access to make changes in specified channels.
-            "NAME_OF_ROLE_NOT_ID", // I.e. "TPD | Chief of Police"
+            "HP", // I.e. "TPD | Chief of Police"
         ],
         "adminRoles": [ // Name of the roles you want to have access to make changes in all suggestion channels.
-            "NAME_OF_ROLE_NOT_ID", // I.e. "SSRP | Staff Director"
+            "Director", // I.e. "SSRP | Staff Director"
         ]
    },
    // The emojies you want to use for reactions, if you want to use CUSTOM emojies you'll have to alter the code itself.

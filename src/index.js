@@ -5,7 +5,7 @@ if (Number(process.version.slice(1).split(".")[0]) < 16) throw new Error("Node 1
 const { Client, Intents, Collection } = require('discord.js');
 const { readdirSync } = require("fs");
 const DB = require('./modules/database.js');
-const { permLevels } = require('./config.js');
+const { permLevels, settings } = require('./config.js');
 const logger = require("./modules/Logger.js");
 require('dotenv').config();
 
@@ -18,6 +18,7 @@ const client = new Client({ intents: myIntents, partials: ['REACTION', 'MESSAGE'
 const commands = new Collection();
 const aliases = new Collection();
 const functions = new Collection();
+const interactions = new Collection();
 
 const levelCache = {};
 for (let i = 0; i < permLevels.length; i++) {
@@ -28,9 +29,11 @@ for (let i = 0; i < permLevels.length; i++) {
 // To prevent client pollution all collections are added into a "container".
 client.container = {
     commands,
+    interactions,
     aliases,
     functions,
-    levelCache
+    levelCache,
+    settings
 };
 
 // client.on('messageCreate', async (message) => {
@@ -62,6 +65,14 @@ const init = async () => {
         // Bind the client to any event, before the existing arguments
         // provided by the discord.js event. 
         client.on(eventName, event.bind(null, client));
+    };
+
+    const interactionFiles = readdirSync("./src/interactions/").filter(file => file.endsWith(".js"));
+    for (const file of interactionFiles) {
+      const interactionName = file.split(".")[0];
+      const prop = require(`./interactions/${file}`);
+      logger.log(`Loading interaction: ${interactionName} 👌`, "log");
+      client.container.interactions.set(interactionName, prop);
     };
 
     try { client.login(process.env.TOKEN) } catch (err) { console.log(err.message) };
