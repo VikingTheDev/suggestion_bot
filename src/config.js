@@ -1,7 +1,7 @@
 const config = {
    settings: {
         "prefix": "!",
-        "guildId": "GUILD_ID",
+        "guildId": "REPLACE_WITH_GUILD_ID",
         "memberRole": "member",
         "systemNotice": "true",
         "modRoles": [ // Name of the roles you want to have access to make changes in specified channels.

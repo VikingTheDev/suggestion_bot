@@ -19,6 +19,7 @@ const commands = new Collection();
 const aliases = new Collection();
 const functions = new Collection();
 const interactions = new Collection();
+const appHandlers = new Collection();
 
 const levelCache = {};
 for (let i = 0; i < permLevels.length; i++) {
@@ -30,16 +31,20 @@ for (let i = 0; i < permLevels.length; i++) {
 client.container = {
     commands,
     interactions,
+    appHandlers,
     aliases,
     functions,
     levelCache,
-    settings
+    settings,
 };
 
-// client.on('messageCreate', async (message) => {
-//   if(!client.channels.cache.get(data.channelId)) client.channels.fetch(data.channelId);
-//   let msg = await client.channels.cache.get(data.channelId).messages.fetch(data.messageId);
-// })
+client.ws.on('INTERACTION_CREATE', (data) => {
+  const form = client.container.appHandlers.get(data.data.custom_id);
+
+	if(!form) return; 
+
+	form.run(client, data);
+});
 
 const init = async () => {
     // Database shit
@@ -73,6 +78,14 @@ const init = async () => {
       const prop = require(`./interactions/${file}`);
       logger.log(`Loading interaction: ${interactionName} 👌`, "log");
       client.container.interactions.set(interactionName, prop);
+    };
+
+    const formFiles = readdirSync("./src/app_handlers/").filter(file => file.endsWith(".js"));
+    for (const file of formFiles) {
+      const formName = file.split(".")[0];
+      const prop = require(`./app_handlers/${file}`);
+      logger.log(`Loading application form handler: ${formName} 👌`, "log");
+      client.container.appHandlers.set(formName, prop);
     };
 
     try { client.login(process.env.TOKEN) } catch (err) { console.log(err.message) };
