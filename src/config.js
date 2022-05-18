@@ -1,14 +1,17 @@
+const { MessageEmbed } = require("discord.js");
+
 const config = {
    settings: {
         "prefix": "!",
         "guildId": "REPLACE_WITH_GUILD_ID",
         "memberRole": "member",
+        "memberRole": "member", // Name of role you want to grant the perm level "member"
         "systemNotice": "true",
         "modRoles": [ // Name of the roles you want to have access to make changes in specified channels.
-            "HP", // I.e. "TPD | Chief of Police"
+            "Role Name", // I.e. "TPD | Chief of Police"
         ],
         "adminRoles": [ // Name of the roles you want to have access to make changes in all suggestion channels.
-            "Director", // I.e. "SSRP | Staff Director"
+            "Role Name", // I.e. "SSRP | Staff Director"
         ]
    },
    // The emojies you want to use for reactions, if you want to use CUSTOM emojies you'll have to alter the code itself.
@@ -16,6 +19,41 @@ const config = {
        approve: '✅',
        deny: '❌'
    },
+   channels: {
+    "suggestions": [ // Name of the channel, LOWERCASE ONLY!!
+      "Moderator"  // Name of the role
+    ],
+    "es-suggestions": [
+      "Sheriff"
+    ]
+   },
+   stickyMessage: {
+    content: "📌 **This is a sticky message** 📌",
+    embeds: [
+        new MessageEmbed({
+          title: 'Important, please read!',
+          description: "To create a new suggestion, press the button below.\nPlease keep all suggestions serious and thorough.\nSuggestion discussion is only permitted in the suggestion's respective thread.",
+          footer: {
+              text: `2022 © VikingTheDev`,
+              iconURL: "https://cdn.discordapp.com/attachments/562656258415525898/965286587523022908/unknown.png",
+              proxyIconURL: "https://media.discordapp.net/attachments/562656258415525898/965286587523022908/unknown.png"
+          }
+      })
+    ],
+    components: [
+        {
+            type: 1,
+            components: [
+                {
+                    type: 2,
+                    label: "Create new suggestion here!",
+                    style: 2,
+                    custom_id: "send_suggestion_form"
+                }
+            ]
+        }
+    ]
+   },   
 
 
    // PERMISSION LEVEL DEFINITIONS.
@@ -68,7 +106,7 @@ const config = {
           }
       }
     },
-    //This is the server owner.
+    // This is the server owner.
     { level: 9,
       name: "Server Owner", 
       // Simple check, if the guild owner id matches the message author's ID, then it will return true.
@@ -83,7 +121,7 @@ const config = {
       name: "Bot Owner", 
       check: (message) => {
         const owner = message.author ?? message.user;
-        return owner.id === process.env.OWNER;
+        return owner.id === process.env.BOT_CREATOR;
       }
     }
   ]

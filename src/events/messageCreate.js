@@ -1,11 +1,43 @@
+const { stickyMessage } = require("../config.js");
 const config = require("../config.js");
 const { permlevel } = require("../modules/functions.js");
 const logger = require("../modules/logger.js");
 
 const { prefix } = config.settings;
 
+let suggestionChannels = [...Object.keys(config.channels)];
+
 module.exports = async (client, message) => {
     const { container } = client;
+
+    const prefixExists = new RegExp(`^<@!?${client.user.id}> |^\\${prefix}`).exec(message.content);
+
+    if(suggestionChannels.includes(message.channel.name.toLowerCase()) && !prefixExists && !message.author.bot) {
+        message.delete();
+        return;
+    };
+
+    // Sticky message stuff
+    for(const channel of suggestionChannels) {
+        if(message.channel.type === 'DM') return;
+
+        if(channel === message.channel.name.toLowerCase()) {
+            // console.log(message.embeds[0], config.stickyMessage.embeds[0])
+            if(!message.embeds[0] || message.embeds[0].description != config.stickyMessage.embeds[0].description) {
+                const lastSticky = container.lastSticky.get(channel);
+                message.channel.send(stickyMessage)
+                    .then(async msg => {
+                        try {
+                            const lastMsg = await message.channel.messages.fetch(lastSticky);
+                            lastMsg.delete();
+                            container.lastSticky.set(channel, msg.id);
+                        } catch (error) {
+                            logger.error(error)
+                        }
+                });
+            };
+        };
+    };
 
     // Ignore if the author is a bot
     if (message.author.bot) return;
@@ -17,7 +49,6 @@ module.exports = async (client, message) => {
     };
 
     // Ignore all messages that do not start with the prefix, or a bot mention.
-    const prefixExists = new RegExp(`^<@!?${client.user.id}> |^\\${prefix}`).exec(message.content);
     if (!prefixExists) return;
 
     // Spilt into args and find the command

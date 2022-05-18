@@ -4,15 +4,7 @@ exports.conf = {
     enabled: true,
     aliases: ['reject', 'd'], // aliases for the commands
     guildOnly: true,
-    permLevel: "Moderator",
-    mod_access: {
-        "774290125973618700": [ // ID of the channel
-            "814621485058359298"  // ID of the role
-        ],
-        "779691693897023488": [
-            "861001628056682567"
-        ] 
-    }
+    permLevel: "Moderator"
 };
 
 exports.help = {
@@ -38,6 +30,9 @@ exports.run = async (client, message, args, level) => {
         return;
     };
 
+    // Fetch the channel
+    if(!client.channels.cache.get(data.channelId)) client.channels.fetch(data.channelId);
+
     //Check if the user has access to approve and deny suggestions in the specific channel.
     const access = await checkAccess(client, message, level, data.channelId);
     if (!access) {
@@ -52,7 +47,6 @@ exports.run = async (client, message, args, level) => {
     };
 
     // Fetch the original suggestion message.
-    if(!client.channels.cache.get(data.channelId)) client.channels.fetch(data.channelId);
     let msg = await client.channels.cache.get(data.channelId).messages.fetch(data.messageId);
 
     // Check if a comment has been provided.
@@ -84,6 +78,11 @@ exports.run = async (client, message, args, level) => {
     msg.edit({embeds:[embed]});
     msg.reactions.removeAll();
 
+    if(msg.hasThread) {
+        const thread = client.channels.cache.get(data.channelId).threads.cache.find(x => x.id === msg.thread.id)
+        thread.setArchived(true);
+    }
+
     setTimeout(() => {
         message.delete();
     },500);
@@ -91,12 +90,12 @@ exports.run = async (client, message, args, level) => {
 
 const checkAccess = async (client, message, level, channelId) => {
     // If the user is one level or more above the threshold, give them access.
-    if(!Object.keys(this.conf.mod_access).includes(message.channel.id)) return false;
+    if(!Object.keys(config.channels).includes(message.channel.name)) return false;
     if(level > client.container.levelCache[this.conf.permLevel]) return true;
     let res = false;
     await message.guild.members.cache.get(message.author.id).roles.cache.forEach(r => {
-        for(const id of this.conf.mod_access[channelId]) {
-            if (id === r.id) res = true;
+        for(const name of config.channels[client.channels.cache.get(channelId).name]) {
+            if (name.toLowerCase() === r.name.toLowerCase()) res = true;
         };
     }); 
 

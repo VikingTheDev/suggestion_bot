@@ -1,7 +1,7 @@
 module.exports = async (client, data) => {
-	const interaction = client.container.interactions.get(data.customId);
+	const interactionHandler = client.container.interactions.get(data.customId);
 
-	if(!interaction) return; 
+	if(!interactionHandler) return; 
 
-	interaction.run(client, data);
+	interactionHandler.run(client, data);
 };

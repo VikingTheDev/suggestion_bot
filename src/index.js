@@ -19,7 +19,7 @@ const commands = new Collection();
 const aliases = new Collection();
 const functions = new Collection();
 const interactions = new Collection();
-const appHandlers = new Collection();
+const lastSticky = new Collection();
 
 const levelCache = {};
 for (let i = 0; i < permLevels.length; i++) {
@@ -31,20 +31,12 @@ for (let i = 0; i < permLevels.length; i++) {
 client.container = {
     commands,
     interactions,
-    appHandlers,
     aliases,
     functions,
     levelCache,
     settings,
+    lastSticky
 };
-
-client.ws.on('INTERACTION_CREATE', (data) => {
-  const form = client.container.appHandlers.get(data.data.custom_id);
-
-	if(!form) return; 
-
-	form.run(client, data);
-});
 
 const init = async () => {
     // Database shit
@@ -58,8 +50,8 @@ const init = async () => {
         logger.log(`Loading Command: ${props.help.name}. 👌`, "log");
         client.container.commands.set(props.help.name, props);
         props.conf.aliases.forEach(alias => {
-      client.container.aliases.set(alias, props.help.name);
-    });
+          client.container.aliases.set(alias, props.help.name);
+        });
     };
 
     const eventFiles = readdirSync("./src/events/").filter(file => file.endsWith(".js"));

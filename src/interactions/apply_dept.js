@@ -28,19 +28,6 @@ exports.run = async (client, interaction) => {
 								},
 								timestamp: Date.now()
 							}
-						],
-						components: [
-							{
-								type: 1,
-								components: [
-									{
-										type: 2,
-										label: "Apply Now!",
-										style: 3,
-										custom_id: "app_form"
-									}
-								]
-							}
 						]
 					})
 					break;

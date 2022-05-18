@@ -1,6 +1,6 @@
 {
   "name": "suggestionbot",
-  "version": "2.0.0",
+  "version": "2.1.0",
   "description": "Suggestion bot.",
   "main": "src/index.js",
   "scripts": {
@@ -12,7 +12,7 @@
   "dependencies": {
     "@sapphire/time-utilities": "^1.7.4",
     "colorette": "^2.0.16",
-    "discord.js": "^13.6.0",
+    "discord.js": "^13.7.0",
     "dotenv": "^16.0.0",
     "jsonfile": "^6.1.0"
   }
