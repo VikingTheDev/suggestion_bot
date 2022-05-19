@@ -72,14 +72,6 @@ const init = async () => {
       client.container.interactions.set(interactionName, prop);
     };
 
-    const formFiles = readdirSync("./src/app_handlers/").filter(file => file.endsWith(".js"));
-    for (const file of formFiles) {
-      const formName = file.split(".")[0];
-      const prop = require(`./app_handlers/${file}`);
-      logger.log(`Loading application form handler: ${formName} 👌`, "log");
-      client.container.appHandlers.set(formName, prop);
-    };
-
     try { client.login(process.env.TOKEN) } catch (err) { console.log(err.message) };
 };
 
