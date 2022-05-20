@@ -1,7 +1,7 @@
 const { MessageActionRow, MessageSelectMenu } = require('discord.js');
 
 exports.conf = {
-    enabled: true,
+    enabled: false,
     aliases: ['app', 'departments', 'depts'], // aliases for the command
     guildOnly: false,
     permLevel: "User",

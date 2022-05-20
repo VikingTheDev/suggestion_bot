@@ -4,14 +4,13 @@ const config = {
    settings: {
         "prefix": "!",
         "guildId": "REPLACE_WITH_GUILD_ID",
-        "memberRole": "member",
         "memberRole": "member", // Name of role you want to grant the perm level "member"
         "systemNotice": "true",
         "modRoles": [ // Name of the roles you want to have access to make changes in specified channels.
-            "Role Name", // I.e. "TPD | Chief of Police"
+            "RoleName", // I.e. "Chief of Police", capitalization does not matter
         ],
         "adminRoles": [ // Name of the roles you want to have access to make changes in all suggestion channels.
-            "Role Name", // I.e. "SSRP | Staff Director"
+            "RoleName", // I.e. "Staff Director", capitalization does not matter
         ]
    },
    // The emojies you want to use for reactions, if you want to use CUSTOM emojies you'll have to alter the code itself.
@@ -20,11 +19,12 @@ const config = {
        deny: '❌'
    },
    channels: {
-    "suggestions": [ // Name of the channel, LOWERCASE ONLY!!
-      "Moderator"  // Name of the role
+    "suggestions": [ // Name of the channel, LOWERCASE ONLY!! Ensure no other channels have the same name, this includes channel categories and Voice Channels.
+      "director",  // Name of the role, capitalization does not matter
+      "Owner"
     ],
     "es-suggestions": [
-      "Sheriff"
+      "Chief of Police"
     ]
    },
    stickyMessage: {
@@ -46,7 +46,7 @@ const config = {
             components: [
                 {
                     type: 2,
-                    label: "Create new suggestion here!",
+                    label: "Create new suggestion",
                     style: 2,
                     custom_id: "send_suggestion_form"
                 }

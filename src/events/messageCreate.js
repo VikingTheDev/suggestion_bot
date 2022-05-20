@@ -12,32 +12,7 @@ module.exports = async (client, message) => {
 
     const prefixExists = new RegExp(`^<@!?${client.user.id}> |^\\${prefix}`).exec(message.content);
 
-    if(suggestionChannels.includes(message.channel.name.toLowerCase()) && !prefixExists && !message.author.bot) {
-        message.delete();
-        return;
-    };
-
-    // Sticky message stuff
-    for(const channel of suggestionChannels) {
-        if(message.channel.type === 'DM') return;
-
-        if(channel === message.channel.name.toLowerCase()) {
-            // console.log(message.embeds[0], config.stickyMessage.embeds[0])
-            if(!message.embeds[0] || message.embeds[0].description != config.stickyMessage.embeds[0].description) {
-                const lastSticky = container.lastSticky.get(channel);
-                message.channel.send(stickyMessage)
-                    .then(async msg => {
-                        try {
-                            const lastMsg = await message.channel.messages.fetch(lastSticky);
-                            lastMsg.delete();
-                            container.lastSticky.set(channel, msg.id);
-                        } catch (error) {
-                            logger.error(error)
-                        }
-                });
-            };
-        };
-    };
+    stickyMsg(message, container, prefixExists);
 
     // Ignore if the author is a bot
     if (message.author.bot) return;
@@ -104,4 +79,28 @@ module.exports = async (client, message) => {
         message.channel.send({ content: `There was a problem with your request.\n\`\`\`${e.message}\`\`\`` })
             .catch(e => console.error("An error occurred replying on an error", e));
     }
+};
+
+const stickyMsg = async (message, container, prefixExists) => {
+    if(message.guild) {
+        if(suggestionChannels.includes(message.channel.name.toLowerCase()) && !prefixExists && !message.author.bot) {
+            message.delete();
+            return;
+        };
+    };
+
+    if(message.channel.type === 'DM') return;
+
+    // Sticky message stuff
+    for(const channel of suggestionChannels) {
+
+        if(channel === message.channel.name.toLowerCase()) {
+            // console.log(message.embeds[0], config.stickyMessage.embeds[0])
+            if(!message.embeds[0] || message.embeds[0].description != config.stickyMessage.embeds[0].description) {
+                const lastSticky = await container.lastSticky.get(channel);
+                container.lastSticky.set(channel, await message.channel.send(stickyMessage));
+                await lastSticky.delete();
+            };
+        };
+    };
 };
