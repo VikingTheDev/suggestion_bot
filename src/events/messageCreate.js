@@ -12,7 +12,7 @@ module.exports = async (client, message) => {
 
     const prefixExists = new RegExp(`^<@!?${client.user.id}> |^\\${prefix}`).exec(message.content);
 
-    stickyMsg(message, container, prefixExists);
+    stickyMsg(message, container);
 
     // Ignore if the author is a bot
     if (message.author.bot) return;
@@ -81,10 +81,12 @@ module.exports = async (client, message) => {
     }
 };
 
-const stickyMsg = async (message, container, prefixExists) => {
+const stickyMsg = async (message, container) => {
     if(message.guild) {
-        if(suggestionChannels.includes(message.channel.name.toLowerCase()) && !prefixExists && !message.author.bot) {
-            message.delete();
+        if(suggestionChannels.includes(message.channel.name.toLowerCase()) && !message.author.bot) {
+            setTimeout(async () => {
+                await message.delete();
+            }, 500);
             return;
         };
     };
@@ -99,7 +101,9 @@ const stickyMsg = async (message, container, prefixExists) => {
             if(!message.embeds[0] || message.embeds[0].description != config.stickyMessage.embeds[0].description) {
                 const lastSticky = await container.lastSticky.get(channel);
                 container.lastSticky.set(channel, await message.channel.send(stickyMessage));
-                await lastSticky.delete();
+                setTimeout(async () => {
+                    await lastSticky.delete();
+                }, 500);
             };
         };
     };
