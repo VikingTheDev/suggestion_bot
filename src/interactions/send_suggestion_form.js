@@ -25,7 +25,7 @@ exports.run = async (client, interaction) => {
         .setCustomId('descInput')
         .setLabel('Description [Required]')
         .setMaxLength(4000)
-        .setMinLength(50)
+        .setMinLength(10)
         .setPlaceholder('Please describe your suggestion in detail')
         .setRequired(true)
         .setStyle('PARAGRAPH');
